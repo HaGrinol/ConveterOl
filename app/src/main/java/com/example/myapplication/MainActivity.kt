@@ -71,64 +71,67 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyApplicationTheme {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            modifier = Modifier,
-                            title = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = "Конвертер валют",
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontSize = 18.sp
-                                    )
-                                    Spacer(modifier = Modifier.padding(10.dp))
-                                    HorizontalDivider(modifier = Modifier.height(16.dp).width(1.dp))
-                                    Text(
-                                        text = "$92.50",
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp
-                                    )
-                                }
-                                    },
-
-                            navigationIcon = {
-                                IconButton(onClick = {}) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Menu,
-                                        contentDescription = "Меню"
-                                    )
-                                }
-                            },
-                            actions = {
-                                IconButton(onClick = {}) {
-                                    Icon(imageVector = Icons.Filled.Refresh, contentDescription = "Обновить")
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                titleContentColor = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                    },
-
-                    content = { innerPadding ->
-                        Greeting(
-                            name = "User",
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
-                )
+                MainScreen()
             }
         }
     }
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainScreen() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                modifier = Modifier,
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Конвертер валют",
+                            overflow = TextOverflow.Ellipsis,
+                            fontSize = 18.sp
+                        )
+                        Spacer(modifier = Modifier.padding(10.dp))
+                        HorizontalDivider(modifier = Modifier.height(16.dp).width(1.dp))
+                        Text(
+                            text = "$92.50",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+                },
 
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Меню"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {}) {
+                        Icon(imageVector = Icons.Filled.Refresh, contentDescription = "Обновить")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+        content = { innerPadding ->
+            Greeting(
+                name = "User",
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
+    )
+}
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     var textField1 by remember { mutableStateOf("") }
@@ -282,8 +285,14 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_10a")
+@Composable
+fun MainScreenPreview() {
+    MyApplicationTheme {
+        MainScreen()
+    }
+}
 
-@Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     MyApplicationTheme {
