@@ -36,6 +36,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SwapVerticalCircle
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
@@ -55,17 +57,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import android.app.Application
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material.icons.filled.MonetizationOn
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
 
 class ConverterViewModel(application: Application) : AndroidViewModel(application){
 
 }
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -79,58 +93,94 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                modifier = Modifier,
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Конвертер валют",
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = 18.sp
-                        )
-                        Spacer(modifier = Modifier.padding(10.dp))
-                        HorizontalDivider(modifier = Modifier.height(16.dp).width(1.dp))
-                        Text(
-                            text = "$92.50",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                    }
-                },
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val items =
+        listOf(
+            "Валюта" to Icons.Default.MonetizationOn,
 
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Меню"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(imageVector = Icons.Filled.Refresh, contentDescription = "Обновить")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        },
-        content = { innerPadding ->
-            Greeting(
-                name = "User",
-                modifier = Modifier.padding(innerPadding)
-            )
+        )
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            Column(
+                Modifier.background(MaterialTheme.colorScheme.background.copy(0.9f))
+                    .fillMaxHeight().padding(top = 30.dp, start = 5.dp, end = 30.dp)
+                    .selectableGroup(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                items.forEachIndexed { index, item ->
+                    val (text, icon) = item
+
+                    NavigationDrawerItem(
+                        label = { Text(text) },
+                        modifier = Modifier.padding(10.dp),
+                        selected = selectedIndex == index,
+                        onClick = { selectedIndex = index },
+                        icon = { Icon(imageVector = icon, contentDescription = null) }
+                    )
+                }
+            }
         }
-    )
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier,
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Конвертер валют",
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 18.sp
+                            )
+                            Spacer(modifier = Modifier.padding(10.dp))
+                            HorizontalDivider(modifier = Modifier.height(16.dp).width(1.dp))
+                            Text(
+                                text = "$92.50",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                            )
+                        }
+                    },
+
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch {drawerState.open()}}) {
+                            Icon(
+                                imageVector = Icons.Filled.Menu,
+                                contentDescription = "Меню"
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = {}) {
+                            Icon(
+                                imageVector = Icons.Filled.Refresh,
+                                contentDescription = "Обновить"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+            },
+            content = { innerPadding ->
+                Greeting(
+                    name = "User",
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+        )
+    }
 }
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
