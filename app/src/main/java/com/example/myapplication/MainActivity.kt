@@ -72,6 +72,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.ComposeCompilerApi
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
@@ -91,6 +92,163 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Composable
+fun ConverterScreen(valuesList: List<String>, modifier: Modifier = Modifier) {
+
+    var textField1 by remember { mutableStateOf("") }
+    var textField2 by remember { mutableStateOf("") }
+
+    var expanded1 by remember {  mutableStateOf(false) }
+    var expanded2 by remember {  mutableStateOf(false) }
+
+    var selectedCurrency1 by remember { mutableStateOf(valuesList.component1()) }
+    var selectedCurrency2 by remember { mutableStateOf(valuesList.component2()) }
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            TextField(
+                modifier = Modifier.clickable { expanded1 != expanded1 },
+                value = textField1,
+                onValueChange = { newText ->
+                    if (newText.isEmpty()) {
+                        textField1 = ""
+                    } else if (newText.count { it == '.' } <= 1 && newText.all { it.isDigit() || it == '.' }) {
+                        textField1 = newText
+                    }
+                },
+                label = { Text("Введите значение") },
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                shape = RoundedCornerShape(15.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Box() {
+                Button(
+                    onClick = { expanded1 = !expanded1 },
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    colors = ButtonColors(
+                        MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.secondary,
+                        disabledContentColor = MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(
+                        text = selectedCurrency1,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+
+                if (expanded1) {
+                    DropdownMenu(
+                        expanded = expanded1,
+                        onDismissRequest = { expanded1 = false },
+
+                        ) {
+                        valuesList.forEach { currency ->
+                            DropdownMenuItem(
+                                text = { Text(currency) },
+                                onClick = {
+                                    selectedCurrency1 = currency
+                                    expanded1 = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.size(15.dp))
+        IconButton(
+            modifier = Modifier.align(alignment = Alignment.End).padding(end = 20.dp),
+            onClick = {
+                val selectedCurrency0 = selectedCurrency1;
+                selectedCurrency1 = selectedCurrency2;
+                selectedCurrency2 = selectedCurrency0
+            }
+        ) {
+            Icon(
+                modifier = Modifier.size(120.dp),
+                imageVector = Icons.Filled.SwapVerticalCircle,
+                contentDescription = "Поменять местами",
+                tint = MaterialTheme.colorScheme.secondary
+            )
+        }
+        Spacer(modifier = Modifier.size(15.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            TextField(
+                modifier = Modifier.clickable { expanded2 != expanded2 },
+                value = textField2,
+                onValueChange = { newText ->
+                    if (newText.isEmpty()) {
+                        textField2 = ""
+                    } else if (newText.count { it == '.' } <= 1 && newText.all { it.isDigit() || it == '.' }) {
+                        textField2 = newText
+                    }
+                },
+                label = { Text("Введите значение") },
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                shape = RoundedCornerShape(15.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Box() {
+                Button(
+                    onClick = { expanded2 = !expanded2 },
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    colors = ButtonColors(
+                        MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.secondary,
+                        disabledContentColor = MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(
+                        text = selectedCurrency2,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+
+                if (expanded2) {
+                    DropdownMenu(
+                        expanded = expanded2,
+                        onDismissRequest = { expanded2 = false },
+
+                        ) {
+                        valuesList.forEach { currency ->
+                            DropdownMenuItem(
+                                text = { Text(currency) },
+                                onClick = {
+                                    selectedCurrency2 = currency
+                                    expanded2 = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
@@ -192,8 +350,7 @@ fun MainScreen() {
                 )
             },
             content = { innerPadding ->
-                Greeting(
-                    name = "User",
+                ValutesScreen(
                     modifier = Modifier.padding(innerPadding)
                 )
             }
@@ -201,169 +358,14 @@ fun MainScreen() {
     }
 }
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    var textField1 by remember { mutableStateOf("") }
-    var expanded1 by remember {  mutableStateOf(false) }
-    val valutes = listOf("USD", "EUR", "RUB")
-    var selectedCurrency1 by remember { mutableStateOf("USD") }
-    var textField2 by remember { mutableStateOf("") }
-    var expanded2 by remember {  mutableStateOf(false) }
-    var selectedCurrency2 by remember { mutableStateOf("EUR") }
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ){
-            TextField(
-                modifier = Modifier.clickable{expanded1 != expanded1},
-                value = textField1,
-                onValueChange = { newText ->
-                    if (newText.isEmpty()) {
-                        textField1 = ""
-                    } else if (newText.count { it == '.' } <= 1 && newText.all { it.isDigit() || it == '.' }) {
-                        textField1 = newText
-                    }
-                },
-                label = { Text("Введите значение") },
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                shape = RoundedCornerShape(15.dp)
-            )
-            Spacer( modifier = Modifier.width(12.dp))
-            Box() {
-                Button(
-                    onClick = { expanded1 = !expanded1 },
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    colors = ButtonColors(
-                        MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondary,
-                        disabledContentColor = MaterialTheme.colorScheme.secondary)
-                ) {
-                    Text(
-                        text = selectedCurrency1,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
-
-                if (expanded1) {
-                    DropdownMenu(
-                        expanded = expanded1,
-                        onDismissRequest = { expanded1 = false },
-
-                    ) {
-                        valutes.forEach { currency ->
-                            DropdownMenuItem(
-                                text = { Text(currency) },
-                                onClick = {
-                                    selectedCurrency1 = currency
-                                    expanded1 = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        Spacer(modifier = Modifier.size(15.dp))
-        IconButton(
-            modifier = Modifier.align(alignment = Alignment.End) .padding(end = 20.dp),
-            onClick = {
-                val selectedCurrency0 = selectedCurrency1;
-                selectedCurrency1 = selectedCurrency2;
-                selectedCurrency2 = selectedCurrency0
-            }
-        ){
-            Icon(
-                modifier = Modifier.size(120.dp),
-                imageVector = Icons.Filled.SwapVerticalCircle,
-                contentDescription = "Поменять местами",
-                tint = MaterialTheme.colorScheme.secondary
-            )
-        }
-        Spacer(modifier = Modifier.size(15.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ){
-            TextField(
-                modifier = Modifier.clickable{expanded2 != expanded2},
-                value = textField2,
-                onValueChange = { newText ->
-                    if (newText.isEmpty()) {
-                        textField2 = ""
-                    } else if (newText.count { it == '.' } <= 1 && newText.all { it.isDigit() || it == '.' }) {
-                        textField2 = newText
-                    }
-                },
-                label = { Text("Введите значение") },
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                shape = RoundedCornerShape(15.dp)
-            )
-            Spacer( modifier = Modifier.width(12.dp))
-            Box() {
-                Button(
-                    onClick = { expanded2 = !expanded2 },
-                    shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    colors = ButtonColors(
-                        MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondary,
-                        disabledContentColor = MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    Text(
-                        text = selectedCurrency2,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
-
-                if (expanded2) {
-                    DropdownMenu(
-                        expanded = expanded2,
-                        onDismissRequest = { expanded2 = false },
-
-                        ) {
-                        valutes.forEach { currency ->
-                            DropdownMenuItem(
-                                text = { Text(currency) },
-                                onClick = {
-                                    selectedCurrency2 = currency
-                                    expanded2 = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+fun ValutesScreen(modifier: Modifier = Modifier) {
+    ConverterScreen(listOf("USD", "EUR", "RUB"), modifier)
 }
 
-@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_10a")
+@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_6a")
 @Composable
 fun MainScreenPreview() {
     MyApplicationTheme {
         MainScreen()
-    }
-}
-
-@Composable
-fun GreetingPreview() {
-    MyApplicationTheme {
-        Greeting("Android")
     }
 }
