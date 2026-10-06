@@ -266,7 +266,7 @@ fun MainScreen() {
         drawerContent = {
             Column(
                 Modifier.background(MaterialTheme.colorScheme.background.copy(0.9f))
-                    .fillMaxHeight().padding(top = 35.dp, start = 5.dp, end = 30.dp)
+                    .fillMaxHeight().padding(top = 55.dp, start = 5.dp, end = 30.dp)
                     .selectableGroup(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -293,7 +293,7 @@ fun MainScreen() {
 
                     NavigationDrawerItem(
                         label = { Text(text) },
-                        modifier = Modifier.padding(10.dp),
+                        modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 0.dp),
                         selected = selectedIndex == index,
                         onClick = { selectedIndex = index },
                         icon = { Icon(imageVector = icon, contentDescription = null) }
@@ -351,9 +351,14 @@ fun MainScreen() {
                 )
             },
             content = { innerPadding ->
-                ValutesScreen(
-                    modifier = Modifier.padding(innerPadding)
-                )
+                when(selectedIndex) {
+                    0 -> ValutesScreen(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                    1 -> LengthScreen(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         )
     }
@@ -361,6 +366,11 @@ fun MainScreen() {
 @Composable
 fun ValutesScreen(modifier: Modifier = Modifier) {
     ConverterScreen(listOf("USD", "EUR", "RUB"), modifier)
+}
+
+@Composable
+fun LengthScreen(modifier: Modifier = Modifier) {
+    ConverterScreen(listOf("Км", "Ми.","М", "См", "Мм" ), modifier)
 }
 
 
