@@ -75,6 +75,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 
 class ConverterViewModel(application: Application) : AndroidViewModel(application){
 
@@ -93,7 +94,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val drawerState = rememberDrawerState(DrawerValue.Open)
     val scope = rememberCoroutineScope()
     var selectedIndex by remember { mutableIntStateOf(0) }
     val items =
@@ -111,11 +112,21 @@ fun MainScreen() {
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
-                IconButton(onClick = { scope.launch {drawerState.close()}}){
-                    Icon(
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = "Меню",
-                        tint = MaterialTheme.colorScheme.secondary
+                Row() {
+                    IconButton(onClick = { scope.launch { drawerState.close() } }) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Меню",
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 18.sp,
+                        text = "ConvertOl",
+                        textAlign = TextAlign.Left,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 items.forEachIndexed { index, item ->
