@@ -106,11 +106,18 @@ fun MainScreen() {
         drawerContent = {
             Column(
                 Modifier.background(MaterialTheme.colorScheme.background.copy(0.9f))
-                    .fillMaxHeight().padding(top = 30.dp, start = 5.dp, end = 30.dp)
+                    .fillMaxHeight().padding(top = 35.dp, start = 5.dp, end = 30.dp)
                     .selectableGroup(),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
+                IconButton(onClick = { scope.launch {drawerState.close()}}){
+                    Icon(
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "Меню",
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                }
                 items.forEachIndexed { index, item ->
                     val (text, icon) = item
 
