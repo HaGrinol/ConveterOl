@@ -60,8 +60,9 @@ import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material.icons.automirrored.filled.ArrowRightAlt
+import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.lifecycle.AndroidViewModel
@@ -252,13 +253,13 @@ fun ConverterScreen(valuesList: List<String>, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
-    val drawerState = rememberDrawerState(DrawerValue.Open)
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedIndex by remember { mutableIntStateOf(0) }
     val items =
         listOf(
             "Валюта" to Icons.Default.MonetizationOn,
-
+            "Длина" to Icons.AutoMirrored.Filled.ArrowRightAlt
         )
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -361,6 +362,7 @@ fun MainScreen() {
 fun ValutesScreen(modifier: Modifier = Modifier) {
     ConverterScreen(listOf("USD", "EUR", "RUB"), modifier)
 }
+
 
 @Preview(showBackground = true, showSystemUi = true, device = "id:pixel_6a")
 @Composable
